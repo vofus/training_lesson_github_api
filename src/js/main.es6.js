@@ -1,14 +1,20 @@
 ;(function() {
 	'use strict';
 
-	/* ===== Constants ===== */
-	const SEARCH_URL = 'https://api.github.com/search/repositories?q=',
-		  LIVE_SEARCH = document.getElementById('liveSearch'),
-		  SEARCH_RESULTS = document.getElementById('resultSearch');
+	/* ===== Variables ===== */
+	let searchUrl = 'https://api.github.com/search/repositories?q=',
+		liveSearch = document.getElementById('liveSearch'),
+		searchResults = document.getElementById('resultSearch');
+
+	let gistPostUrl = 'https://api.github.com/gists',
+		gistName = document.getElementById('gistName'),
+		gistBody = document.getElementById('gistBody'),
+		gistBtn = document.getElementById('gistSubmitBtn'),
+		gistResult = document.getElementById('newGistResult');
 
 	/* ===== Templates ===== */
 	const SEARCH_RESULT_TEMP = 	'<% _.forEach(items, function(item) { %><p><%-item.full_name%></p><p><%-item.description%></p><p><%-item.language%></p><p><%-item.html_url%></p><hr><% }); %>';
-
+	const GIST_LINK_TEMP = '<a href="<%-items%>" target="_blank">Link of new Gist</a>';
 	/* === Begin CLASSES === */
 
 	class Painter {
@@ -34,7 +40,6 @@
 				data = [];
 
 			ajax.onreadystatechange = function() {
-				console.log(this);
 		  		if (this.readyState != 4) return;
 
 			  	if (this.status != 200) {
@@ -48,9 +53,6 @@
 			}
 
 			self.elem.addEventListener('keydown', (event) => {
-				// if(event.target.value.length >= 3) {
-				// 	ajax.abort();
-				// }
 				ajax.abort();
 			});
 			self.elem.addEventListener('keyup', (event) => {
@@ -64,11 +66,65 @@
 		}
 	}
 
+	class GistController {
+		constructor(btn, postUrl, painter) {
+			this.btn = btn;
+			this.url = postUrl;
+			this.painter = painter;
+		}
+		watch() {
+			let self = this,
+				data = '',
+				ajax = new XMLHttpRequest();
+
+			ajax.onreadystatechange = function() {
+		  		if (this.readyState != 4) return;
+
+			  	if (this.status != 201) {
+			    	console.log(this.status + ': ' + this.statusText);
+			    	return;
+			  	}
+			  	if (this.responseText === '') return;
+			  	data = JSON.parse(this.responseText).html_url;
+
+			 	self.painter.render(data);
+
+			}
+
+			self.btn.addEventListener('click', (event) => {
+				event.preventDefault();
+				if(gistName.value !== '' && gistBody.value !== '') {
+					let gistObj = new Gist(gistName.value, gistBody.value);
+
+					ajax.open('POST', `${self.url}`);
+					ajax.send(JSON.stringify(gistObj.gist));
+				}
+			});
+		}
+	}
+
+	class Gist {
+		constructor(gistName, gistBody) {
+			this.gist = {
+				"files": {
+				    [gistName]: {
+				    	"content": gistBody
+				    }
+				}
+			};
+		}
+	}
+
 	/* ==== End CLASSES ==== */
 
-	let painterSearchResult = new Painter(SEARCH_RESULTS, SEARCH_RESULT_TEMP);
-	let liveSerchCtrl = new LiveSearchController(LIVE_SEARCH, SEARCH_URL, painterSearchResult);
+	let painterSearchResult = new Painter(searchResults, SEARCH_RESULT_TEMP);
+	let painterGistResult = new Painter(gistResult, GIST_LINK_TEMP);
+
+	let liveSerchCtrl = new LiveSearchController(liveSearch, searchUrl, painterSearchResult);
 	liveSerchCtrl.watch();
+
+	let gistCtrl = new GistController(gistBtn, gistPostUrl, painterGistResult);
+	gistCtrl.watch();
 	
 
 	// painter.render([{full_name: "Andrey"}, {full_name: "Vasin"}]);
