@@ -13,8 +13,9 @@
 		gistResult = document.getElementById('newGistResult');
 
 	/* ===== Templates ===== */
-	const SEARCH_RESULT_TEMP = 	'<% _.forEach(items, function(item) { %><p><%-item.full_name%></p><p><%-item.description%></p><p><%-item.language%></p><p><%-item.html_url%></p><hr><% }); %>';
-	const GIST_LINK_TEMP = '<a href="<%-items%>" target="_blank">Link of new Gist</a>';
+	// const SEARCH_RESULT_TEMP = 	'<% _.forEach(items, function(item) { %><p><%-item.full_name%></p><p><%-item.description%></p><p><%-item.language%></p><p><%-item.html_url%></p><hr><% }); %>';
+	const SEARCH_RESULT_TEMP = document.getElementById('searchResultTemplate').innerHTML;
+	const GIST_LINK_TEMP = document.getElementById('gistLinkTemplate').innerHTML;
 	/* === Begin CLASSES === */
 
 	class Painter {
@@ -74,7 +75,7 @@
 		}
 		watch() {
 			let self = this,
-				data = '',
+				data = [],
 				ajax = new XMLHttpRequest();
 
 			ajax.onreadystatechange = function() {
@@ -85,7 +86,16 @@
 			    	return;
 			  	}
 			  	if (this.responseText === '') return;
-			  	data = JSON.parse(this.responseText).html_url;
+			  	let responseObj = JSON.parse(this.responseText),
+			  		gistName = '',
+			  		gistUrl = responseObj.html_url;
+
+			  	for (let field in responseObj.files) {
+			  		gistName = responseObj.files[field].filename;
+			  	}
+			  	
+			  	data.push(new GistHistory(gistName, gistUrl));
+			  	console.log(data);	
 
 			 	self.painter.render(data);
 
@@ -97,7 +107,10 @@
 					let gistObj = new Gist(gistName.value, gistBody.value);
 
 					ajax.open('POST', `${self.url}`);
-					ajax.send(JSON.stringify(gistObj.gist));
+					ajax.send(JSON.stringify(gistObj));
+
+					gistName.value = '';
+					gistBody.value = '';
 				}
 			});
 		}
@@ -105,12 +118,21 @@
 
 	class Gist {
 		constructor(gistName, gistBody) {
-			this.gist = {
+			return {
 				"files": {
 				    [gistName]: {
 				    	"content": gistBody
 				    }
 				}
+			};
+		}
+	}
+
+	class GistHistory {
+		constructor(gistName, gistUrl) {
+			return {
+				name: gistName,
+				url: gistUrl
 			};
 		}
 	}

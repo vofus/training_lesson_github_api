@@ -22,8 +22,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 	    gistResult = document.getElementById('newGistResult');
 
 	/* ===== Templates ===== */
-	var SEARCH_RESULT_TEMP = '<% _.forEach(items, function(item) { %><p><%-item.full_name%></p><p><%-item.description%></p><p><%-item.language%></p><p><%-item.html_url%></p><hr><% }); %>';
-	var GIST_LINK_TEMP = '<a href="<%-items%>" target="_blank">Link of new Gist</a>';
+	// const SEARCH_RESULT_TEMP = 	'<% _.forEach(items, function(item) { %><p><%-item.full_name%></p><p><%-item.description%></p><p><%-item.language%></p><p><%-item.html_url%></p><hr><% }); %>';
+	var SEARCH_RESULT_TEMP = document.getElementById('searchResultTemplate').innerHTML;
+	var GIST_LINK_TEMP = document.getElementById('gistLinkTemplate').innerHTML;
 	/* === Begin CLASSES === */
 
 	var Painter = function () {
@@ -105,7 +106,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 			key: 'watch',
 			value: function watch() {
 				var self = this,
-				    data = '',
+				    data = [],
 				    ajax = new XMLHttpRequest();
 
 				ajax.onreadystatechange = function () {
@@ -116,7 +117,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 						return;
 					}
 					if (this.responseText === '') return;
-					data = JSON.parse(this.responseText).html_url;
+					var responseObj = JSON.parse(this.responseText),
+					    gistName = '',
+					    gistUrl = responseObj.html_url;
+
+					for (var field in responseObj.files) {
+						gistName = responseObj.files[field].filename;
+					}
+
+					data.push(new GistHistory(gistName, gistUrl));
+					console.log(data);
 
 					self.painter.render(data);
 				};
@@ -127,7 +137,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 						var gistObj = new Gist(gistName.value, gistBody.value);
 
 						ajax.open('POST', '' + self.url);
-						ajax.send(JSON.stringify(gistObj.gist));
+						ajax.send(JSON.stringify(gistObj));
+
+						gistName.value = '';
+						gistBody.value = '';
 					}
 				});
 			}
@@ -139,10 +152,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 	var Gist = function Gist(gistName, gistBody) {
 		_classCallCheck(this, Gist);
 
-		this.gist = {
+		return {
 			"files": _defineProperty({}, gistName, {
 				"content": gistBody
 			})
+		};
+	};
+
+	var GistHistory = function GistHistory(gistName, gistUrl) {
+		_classCallCheck(this, GistHistory);
+
+		return {
+			name: gistName,
+			url: gistUrl
 		};
 	};
 
