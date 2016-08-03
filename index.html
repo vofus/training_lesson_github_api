@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>AJAX - GitHub API</title>
+</head>
+<body>
+	<div class="search">
+		<input id="liveSearch" type="text" placeholder="Begin type text...">
+	</div>
+	<div id="resultSearch">
+
+	</div>
+	
+	<form id="newGistForm">
+		<input type="text" id="gistName" placeholder="example: file.txt">
+		<textarea id="gistBody" rows="10" cols="45"></textarea>
+		<input type="submit" value="Create">
+	</form>
+	<div id="newGistResult"></div>
+	
+	<script src="libs/lodash.lib.js"></script>
+	<script src="src/js/main.es6.js"></script>
+</body>
+</html>
