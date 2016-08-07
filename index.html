@@ -9,6 +9,26 @@
 	<link rel="stylesheet" href="dist/css/main.css">
 </head>
 <body>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+	    	<div id="githubUser" class="navbar-header hidden">
+	    		<a id="githubLink" class="navbar-brand avatar__link" href="#" target="_blank">
+	        		<img id="githubAvatar" class="avatar__img" alt="Avatar" src="">
+	      		</a>
+	      		<span id="githubName" class="avatar__name">Vofus</span>
+	    	</div>
+			<form class="navbar-form navbar-right">
+				<div class="form-group">
+			    	<input id="loginField" type="text" class="form-control" placeholder="Login">
+				</div>
+				<div class="form-group">
+			    	<input id="passField" type="password" class="form-control" placeholder="Password">
+				</div>
+				<button id="signInBtn" type="submit" class="btn btn-default">Sign in</button>
+				<button id="signOutBtn" type="submit" class="btn btn-default hidden">Sign out</button>
+			</form>
+	  	</div>
+	</nav>
 	<div class="container">
 		<div class="row">
 			<h2 class="header-app text-center">Создание приложения с помощью GitHub API</h2>
