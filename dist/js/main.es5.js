@@ -48,13 +48,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function signin() {
                 var self = this,
                     data = void 0,
-                    authHeader = '',
                     hash = '',
+                    authHeader = '',
                     ajax = new XMLHttpRequest();
 
                 if (self.auth === true) {
                     hash = getCookie('hash');
                     authHeader = 'Basic ' + hash;
+                    console.log(hash);
 
                     ajax.open('GET', '' + self.authUrl);
                     ajax.setRequestHeader('Authorization', authHeader);
@@ -84,6 +85,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     self.signInBtn.classList.add('hidden');
                     self.githubUser.classList.remove('hidden');
                     self.signOutBtn.classList.remove('hidden');
+
+                    setCookie('hash', hash, { expires: 86400 });
+                    setCookie('auth', 'true', { expires: 86400 });
                 };
 
                 self.signInBtn.addEventListener('click', function (event) {
@@ -101,8 +105,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         ajax.setRequestHeader('Authorization', authHeader);
                         ajax.send();
 
-                        setCookie('hash', hash, { expires: 86400 });
-                        setCookie('auth', 'true', { expires: 86400 });
+                        // setCookie('hash', hash, {expires: 86400});
+                        // setCookie('auth', 'true', {expires: 86400});
 
                         self.loginField.value = '';
                         self.passField.value = '';
@@ -113,6 +117,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     event.preventDefault();
                     deleteCookie('hash');
                     deleteCookie('auth');
+                    hash = '';
+                    authHeader = '';
 
                     self.loginField.classList.remove('hidden');
                     self.passField.classList.remove('hidden');

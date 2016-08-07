@@ -33,13 +33,14 @@
         signin() {
             let self = this,
                 data,
-                authHeader = '',
                 hash = '',
+                authHeader = '',
                 ajax = new XMLHttpRequest();
 
             if (self.auth === true) {
                 hash = getCookie('hash');
                 authHeader = `Basic ${hash}`;
+                console.log(hash);
 
                 ajax.open('GET', `${self.authUrl}`);
                 ajax.setRequestHeader('Authorization', authHeader);
@@ -69,6 +70,9 @@
                 self.signInBtn.classList.add('hidden');
                 self.githubUser.classList.remove('hidden');
                 self.signOutBtn.classList.remove('hidden');
+
+                setCookie('hash', hash, {expires: 86400});
+                setCookie('auth', 'true', {expires: 86400});
             }
 
             self.signInBtn.addEventListener('click', (event) => {
@@ -84,8 +88,8 @@
                     ajax.setRequestHeader('Authorization', authHeader);
                     ajax.send();
 
-                    setCookie('hash', hash, {expires: 86400});
-                    setCookie('auth', 'true', {expires: 86400});
+                    // setCookie('hash', hash, {expires: 86400});
+                    // setCookie('auth', 'true', {expires: 86400});
 
                     self.loginField.value = '';
                     self.passField.value = '';
@@ -96,6 +100,8 @@
                 event.preventDefault();
                 deleteCookie('hash');
                 deleteCookie('auth');
+                hash = '';
+                authHeader = '';
 
                 self.loginField.classList.remove('hidden');
                 self.passField.classList.remove('hidden');
