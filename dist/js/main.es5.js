@@ -50,6 +50,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     data = void 0,
                     hash = '',
                     authHeader = '',
+                    message = document.getElementById('message'),
                     ajax = new XMLHttpRequest();
 
                 if (self.auth === true) {
@@ -70,6 +71,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     if (this.status != 200) {
                         console.log(this.status + ': ' + this.statusText);
+                        message.innerText = 'Ошибка! Введен неверный логин или пароль.';
+                        message.classList.add('message--error');
+                        setTimeout(function () {
+                            message.classList.remove('message--error');
+                            message.innerText = '';
+                        }, 5000);
                         return;
                     }
                     if (this.responseText === '') return;
@@ -79,6 +86,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     self.githubLink.href = data.html_url;
                     self.githubAvatar.src = data.avatar_url;
                     self.githubName.innerText = data.name;
+
+                    message.innerText = 'Добропожаловать!';
+                    message.classList.add('message--success');
+                    setTimeout(function () {
+                        message.classList.remove('message--success');
+                        message.innerText = '';
+                    }, 5000);
 
                     self.loginField.classList.add('hidden');
                     self.passField.classList.add('hidden');
@@ -105,9 +119,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         ajax.setRequestHeader('Authorization', authHeader);
                         ajax.send();
 
-                        // setCookie('hash', hash, {expires: 86400});
-                        // setCookie('auth', 'true', {expires: 86400});
-
                         self.loginField.value = '';
                         self.passField.value = '';
                     }
@@ -119,6 +130,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     deleteCookie('auth');
                     hash = '';
                     authHeader = '';
+
+                    message.innerText = 'До скорой встречи!';
+                    message.classList.add('message--goodbay');
+                    setTimeout(function () {
+                        message.classList.remove('message--goodbay');
+                        message.innerText = '';
+                    }, 5000);
 
                     self.loginField.classList.remove('hidden');
                     self.passField.classList.remove('hidden');

@@ -28,3 +28,29 @@
     height: 50px;
     padding: 15px 0;
 }
+.message {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    display: inline-block;
+    height: 50px;
+    padding: 15px 30px;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: top .6s ease-in-out, opacity .8s ease-in-out;
+    &--success {
+		top: 0;
+		background-color: rgb(158, 255, 182);
+		opacity: 1;
+    }
+    &--error {
+		top: 0;
+		background-color: rgb(255, 75, 73);
+		opacity: 1;
+    }
+    &--goodbay {
+    	top: 0;
+		background-color: rgb(255, 205, 108);
+		opacity: 1;
+    }
+}

@@ -35,6 +35,7 @@
                 data,
                 hash = '',
                 authHeader = '',
+                message = document.getElementById('message'),
                 ajax = new XMLHttpRequest();
 
             if (self.auth === true) {
@@ -55,6 +56,12 @@
 
                 if (this.status != 200) {
                     console.log(this.status + ': ' + this.statusText);
+                    message.innerText = 'Ошибка! Введен неверный логин или пароль.';
+                    message.classList.add('message--error');
+                    setTimeout(() => {
+                        message.classList.remove('message--error');
+                        message.innerText = '';
+                    }, 5000);
                     return;
                 }
                 if (this.responseText === '') return;
@@ -64,6 +71,13 @@
                 self.githubLink.href = data.html_url;
                 self.githubAvatar.src = data.avatar_url;
                 self.githubName.innerText = data.name;
+
+                message.innerText = 'Добропожаловать!';
+                message.classList.add('message--success');
+                setTimeout(() => {
+                    message.classList.remove('message--success');
+                    message.innerText = '';
+                }, 5000);
 
                 self.loginField.classList.add('hidden');
                 self.passField.classList.add('hidden');
@@ -88,9 +102,6 @@
                     ajax.setRequestHeader('Authorization', authHeader);
                     ajax.send();
 
-                    // setCookie('hash', hash, {expires: 86400});
-                    // setCookie('auth', 'true', {expires: 86400});
-
                     self.loginField.value = '';
                     self.passField.value = '';
                 }
@@ -102,6 +113,13 @@
                 deleteCookie('auth');
                 hash = '';
                 authHeader = '';
+
+                message.innerText = 'До скорой встречи!';
+                message.classList.add('message--goodbay');
+                setTimeout(() => {
+                    message.classList.remove('message--goodbay');
+                    message.innerText = '';
+                }, 5000);
 
                 self.loginField.classList.remove('hidden');
                 self.passField.classList.remove('hidden');
